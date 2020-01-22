@@ -3,6 +3,7 @@
 import math as ma
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.linalg
 
 # Discrétisation
 
@@ -61,7 +62,7 @@ C = c(Dist)
 
 ## Question 4
 
-M1 = []
+M1 = []	
 M2 = []
 M3 = []
 
@@ -116,4 +117,25 @@ variance = M3 - np.dot(M_utile,M2.T)
 
 ## Question 7 
 
+# On calcule d'abord la matrice R, qui est la racine carrée de C.
 
+R = scipy.linalg.sqrtm(M3)
+
+# On prend une fonction qui fait une simulation aléatoire d'un vecteur gaussion centré normé
+
+def simulation_Z(N = 95):
+	Y = np.random.normal(0,1,N)
+	Z = esperance + np.dot(R,Y)
+	return Z
+
+def simulation_L(N = 95):
+	Z = simulation_Z(N)
+	delta = 5
+	S = 0
+	temp = Z[0]
+	for z in Z[1:]:
+		S += ma.sqrt(delta**2 + (z-temp)**2)
+		temp = 1*z
+	return S
+
+print(simulation_L())
