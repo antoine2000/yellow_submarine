@@ -173,9 +173,13 @@ for e in esperance_complete[1:]:
 		longueur_esperee += ma.sqrt(5**2 + (e-temp)**2)
 		temp = 1*e
 
-longueur_simulee = estimation(100)
+longueur_simulee_100 = estimation(100)
+longueur_simulee_1000 = estimation(1000)
+longueur_simulee_10000 = estimation(10000)
 
-#print(longueur_simulee,longueur_esperee)
+print(f"longueur simulée avec 100 simulations : {longueur_simulee_100} ; valeur espérée : {longueur_esperee} ")
+print(f"longueur simulée avec 100 simulations : {longueur_simulee_1000} ; valeur espérée : {longueur_esperee} ")
+print(f"longueur simulée avec 100 simulations : {longueur_simulee_10000} ; valeur espérée : {longueur_esperee} ")
 
 def moyenne_glissante(number, N = 95):
 	simulations = []
@@ -205,7 +209,7 @@ def hist_moyenne(number, N = 95):
 	plt.title("Histogramme des longueurs de cable simulee au cours des simulations")
 	plt.xlabel("longueur")
 	plt.ylabel("nombre de simulations")
-	plt.hist(moyennes, bins = np.arange(525,535,.3))
-	plt.show()	
+	plt.hist(moyennes, bins = np.arange(529,532,.2))
+	plt.show()		
 
-hist_moyenne(100)
+#hist_moyenne(100)
