@@ -177,9 +177,9 @@ longueur_simulee_100 = estimation(100)
 longueur_simulee_1000 = estimation(1000)
 longueur_simulee_10000 = estimation(10000)
 
-print(f"longueur simulée avec 100 simulations : {longueur_simulee_100} ; valeur espérée : {longueur_esperee} ")
-print(f"longueur simulée avec 100 simulations : {longueur_simulee_1000} ; valeur espérée : {longueur_esperee} ")
-print(f"longueur simulée avec 100 simulations : {longueur_simulee_10000} ; valeur espérée : {longueur_esperee} ")
+# print(f"longueur simulée avec 100 simulations : {longueur_simulee_100} ; valeur espérée : {longueur_esperee} ")
+# print(f"longueur simulée avec 100 simulations : {longueur_simulee_1000} ; valeur espérée : {longueur_esperee} ")
+# print(f"longueur simulée avec 100 simulations : {longueur_simulee_10000} ; valeur espérée : {longueur_esperee} ")
 
 def moyenne_glissante(number, N = 95):
 	simulations = []
@@ -190,18 +190,22 @@ def moyenne_glissante(number, N = 95):
 	return moyennes
 
 def print_moyenne_glissante(number, N = 95):
-	numbers = [i for i in range(1,number+1)]
-	moyennes = moyenne_glissante(number,N)
+	numbers = [i for i in range(1,int(number*.95)+1)]
+	moyennes = moyenne_glissante(number,N)[int(number*.05):]
 	plt.figure()
 	plt.title("Evolution de la moyenne des longueurs de cable simulee au cours des simulations")
 	plt.xlabel("numero de la simulation")
 	plt.ylabel("moyenne depuis le debut des simulation")
 	plt.plot(numbers,moyennes)
-	plt.plot(numbers,[moyennes[-1] for _ in range(number)],label = "valeur finale")
+	plt.plot(numbers,[moyennes[-1] for _ in range(int(number*.95))],label = "valeur finale")
+	plt.plot(numbers,[moyennes[-1]*.9995 for _ in range(int(number*.95))],label = "intervalle à -00,5%")
+	plt.plot(numbers,[moyennes[-1]*1.0005 for _ in range(int(number*.95))],label = "intervalle à +00,5%")
 	plt.legend(loc=0)
 	plt.show()
 
-# print_moyenne_glissante(100)
+print_moyenne_glissante(100)
+print_moyenne_glissante(1000)
+print_moyenne_glissante(10000)
 
 def hist_moyenne(number, N = 95):
 	moyennes = moyenne_glissante(number,N)
