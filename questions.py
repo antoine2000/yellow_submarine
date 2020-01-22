@@ -138,4 +138,14 @@ def simulation_L(N = 95):
 		temp = 1*z
 	return S
 
-print(simulation_L())
+def print_simulation(N = 95):
+	plt.figure()
+	plt.title("Simulation des profondeurs en fonction de la position")
+	plt.xlabel("position")
+	plt.ylabel("profondeur")
+	plt.plot(unknown_indexes,simulation_Z(N), label = "simulation")
+	plt.plot(unknown_indexes,esperance,label = "esperance")
+	plt.legend(loc = 0)
+	plt.show()
+
+print_simulation()
