@@ -126,7 +126,13 @@ R = scipy.linalg.sqrtm(M3)
 def simulation_Z(N = 95):
 	Y = np.random.normal(0,1,N)
 	Z = esperance + np.dot(R,Y)
-	return Z
+	Z_complete = []
+	for i in range(101):
+		if i%20 == 0:
+			Z_complete.append(depth[i//20])
+		else:
+			Z_complete.append(Z[i-i//20-1])
+	return Z_complete
 
 def simulation_L(N = 95):
 	Z = simulation_Z(N)
@@ -143,9 +149,63 @@ def print_simulation(N = 95):
 	plt.title("Simulation des profondeurs en fonction de la position")
 	plt.xlabel("position")
 	plt.ylabel("profondeur")
-	plt.plot(unknown_indexes,simulation_Z(N), label = "simulation")
+	plt.plot(discretization_indexes,simulation_Z(N), label = "simulation")
 	plt.plot(unknown_indexes,esperance,label = "esperance")
 	plt.legend(loc = 0)
 	plt.show()
 
-print_simulation()
+#print_simulation()
+
+def estimation(number, N = 95):
+	simulations = np.array([simulation_L(N) for _ in range(95)])
+	return np.mean(simulations)
+
+esperance_complete = []
+for i in range(101):
+		if i%20 == 0:
+			esperance_complete.append(depth[i//20])
+		else:
+			esperance_complete.append(esperance[i-i//20-1])
+
+longueur_esperee = 0
+temp = esperance_complete[0]
+for e in esperance_complete[1:]:
+		longueur_esperee += ma.sqrt(5**2 + (e-temp)**2)
+		temp = 1*e
+
+longueur_simulee = estimation(100)
+
+#print(longueur_simulee,longueur_esperee)
+
+def moyenne_glissante(number, N = 95):
+	simulations = []
+	moyennes = []
+	for k in range(1,number+1):
+		simulations.append(simulation_L(N))
+		moyennes.append(sum(simulations)/k)
+	return moyennes
+
+def print_moyenne_glissante(number, N = 95):
+	numbers = [i for i in range(1,number+1)]
+	moyennes = moyenne_glissante(number,N)
+	plt.figure()
+	plt.title("Evolution de la moyenne des longueurs de cable simulee au cours des simulations")
+	plt.xlabel("numero de la simulation")
+	plt.ylabel("moyenne depuis le debut des simulation")
+	plt.plot(numbers,moyennes)
+	plt.plot(numbers,[moyennes[-1] for _ in range(number)],label = "valeur finale")
+	plt.legend(loc=0)
+	plt.show()
+
+# print_moyenne_glissante(100)
+
+def hist_moyenne(number, N = 95):
+	moyennes = moyenne_glissante(number,N)
+	plt.figure()
+	plt.title("Histogramme des longueurs de cable simulee au cours des simulations")
+	plt.xlabel("longueur")
+	plt.ylabel("nombre de simulations")
+	plt.hist(moyennes, bins = np.arange(525,535,.3))
+	plt.show()	
+
+hist_moyenne(100)
