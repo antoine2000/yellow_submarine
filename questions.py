@@ -144,17 +144,18 @@ def simulation_L(N = 95):
 		temp = 1*z
 	return S
 
-def print_simulation(N = 95):
+def print_simulations(number = 1, N = 95):
 	plt.figure()
 	plt.title("Simulation des profondeurs en fonction de la position")
 	plt.xlabel("position")
 	plt.ylabel("profondeur")
-	plt.plot(discretization_indexes,simulation_Z(N), label = "simulation")
 	plt.plot(unknown_indexes,esperance,label = "esperance")
+	for i in range(number):
+		plt.plot(discretization_indexes,simulation_Z(N), label = "simulation numéro " + str(i+1))
 	plt.legend(loc = 0)
 	plt.show()
 
-#print_simulation()
+print_simulations(3)
 
 def estimation(number, N = 95):
 	simulations = np.array([simulation_L(N) for _ in range(95)])
@@ -173,9 +174,9 @@ for e in esperance_complete[1:]:
 		longueur_esperee += ma.sqrt(5**2 + (e-temp)**2)
 		temp = 1*e
 
-longueur_simulee_100 = estimation(100)
-longueur_simulee_1000 = estimation(1000)
-longueur_simulee_10000 = estimation(10000)
+# longueur_simulee_100 = estimation(100)
+# longueur_simulee_1000 = estimation(1000)
+# longueur_simulee_10000 = estimation(10000)
 
 # print(f"longueur simulée avec 100 simulations : {longueur_simulee_100} ; valeur espérée : {longueur_esperee} ")
 # print(f"longueur simulée avec 100 simulations : {longueur_simulee_1000} ; valeur espérée : {longueur_esperee} ")
@@ -203,9 +204,9 @@ def print_moyenne_glissante(number, N = 95):
 	plt.legend(loc=0)
 	plt.show()
 
-print_moyenne_glissante(100)
-print_moyenne_glissante(1000)
-print_moyenne_glissante(10000)
+# print_moyenne_glissante(100)
+# print_moyenne_glissante(1000)
+# print_moyenne_glissante(10000)
 
 def hist_moyenne(number, N = 95):
 	moyennes = moyenne_glissante(number,N)
