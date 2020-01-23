@@ -155,7 +155,7 @@ def print_simulations(number = 1, N = 95):
 	plt.legend(loc = 0)
 	plt.show()
 
-print_simulations(3)
+#print_simulations(3)
 
 def estimation(number, N = 95):
 	simulations = np.array([simulation_L(N) for _ in range(95)])
@@ -191,7 +191,7 @@ def moyenne_glissante(number, N = 95):
 	return moyennes
 
 def print_moyenne_glissante(number, N = 95):
-	numbers = [i for i in range(1,int(number*.95)+1)]
+	numbers = [i for i in range(int(number*0.05),number)]
 	moyennes = moyenne_glissante(number,N)[int(number*.05):]
 	plt.figure()
 	plt.title("Evolution de la moyenne des longueurs de cable simulee au cours des simulations")
@@ -199,14 +199,15 @@ def print_moyenne_glissante(number, N = 95):
 	plt.ylabel("moyenne depuis le debut des simulation")
 	plt.plot(numbers,moyennes)
 	plt.plot(numbers,[moyennes[-1] for _ in range(int(number*.95))],label = "valeur finale")
-	plt.plot(numbers,[moyennes[-1]*.9995 for _ in range(int(number*.95))],label = "intervalle à -00,5%")
-	plt.plot(numbers,[moyennes[-1]*1.0005 for _ in range(int(number*.95))],label = "intervalle à +00,5%")
+	plt.plot(numbers,[moyennes[-1] for _ in range(int(number*.95))],label = "intervalle à -00,5%")
+	plt.plot(numbers,[moyennes[-1] for _ in range(int(number*.95))],label = "intervalle à +00,5%")
 	plt.legend(loc=0)
 	plt.show()
 
 # print_moyenne_glissante(100)
-# print_moyenne_glissante(1000)
+print_moyenne_glissante(1000)
 # print_moyenne_glissante(10000)
+# print_moyenne_glissante(100000)
 
 def hist_moyenne(number, N = 95):
 	moyennes = moyenne_glissante(number,N)
@@ -214,7 +215,10 @@ def hist_moyenne(number, N = 95):
 	plt.title("Histogramme des longueurs de cable simulee au cours des simulations")
 	plt.xlabel("longueur")
 	plt.ylabel("nombre de simulations")
-	plt.hist(moyennes, bins = np.arange(529,532,.2))
+	plt.hist(moyennes, bins = np.arange(530.4,530.6,.003))
 	plt.show()		
 
-#hist_moyenne(100)
+# hist_moyenne(100)
+# hist_moyenne(1000)
+# hist_moyenne(10000)
+# hist_moyenne(100000)
