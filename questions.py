@@ -140,7 +140,7 @@ def simulation_L(N = 95):
 	S = 0
 	temp = Z[0]
 	for z in Z[1:]:
-		S += ma.sqrt(delta**2 + (z-temp)**2)
+		S += ma.sqrt(delta**2 + np.real((z-temp))**2)
 		temp = 1*z
 	return S
 
@@ -173,7 +173,6 @@ for e in esperance_complete[1:]:
 		longueur_esperee += ma.sqrt(5**2 + (e-temp)**2)
 		temp = 1*e
 
-print(longueur_esperee)
 
 def moyenne_evoluante(number, N = 95):
 	simulations = []
@@ -197,8 +196,6 @@ def affichage_moyenne_evoluante(number, N = 95):
 	plt.legend(loc=0)
 	plt.show()
 
-#affichage_moyenne_evoluante(100000)
-
 def hist_moyenne(number, N = 95):
 	moyennes = moyenne_evoluante(number,N)
 	plt.figure()
@@ -208,8 +205,54 @@ def hist_moyenne(number, N = 95):
 	plt.hist(moyennes, bins = np.arange(522.3,522.7,0.001))
 	plt.show()		
 
-#hist_moyenne(100000)
+def proportion_dedans(number, simulations, moyenne, ecart):
+	nombre_dedans = 0
+	for simulation in simulations:
+		if simulation > moyenne - ecart and simulation < moyenne + ecart :
+			nombre_dedans += 1
+	return nombre_dedans / number
 
 def intervalle_confiance_naïve(number, N = 95):
-	simulations_L = [simulation_L(N) for _ in range(number)]
-	moyenne = np.mean(simulations)
+	simulations_L = np.array([simulation_L(N) for _ in range(number)])
+	moyenne = np.mean(simulations_L)
+	ecart_moyenne = 0
+	while proportion_dedans(number, simulations_L,moyenne,ecart_moyenne) < 0.95 :
+		ecart_moyenne += 0.01
+	return 2*ecart_moyenne
+
+
+def intervalle_confiance_approx(number, N = 95):
+	simulations_L = np.array([simulation_L(N) for _ in range(number)])
+	moyenne = np.mean(simulations_L)
+	ecart_type = ma.sqrt(np.mean( (simulations_L - moyenne)**2 ))
+	return 3*ecart_type
+
+# résultats des intervalles de confiance
+
+# plt.figure()
+# plt.title("écart carateristique de l'intervalle de confiance à 95% de la longueur du câble en fonction de la méthode et du nombre de simulations")
+# plt.xlabel("nombre de simulations, en échelle logarithmique")
+# plt.xscale("log")
+# plt.ylabel("écart carateristique")
+# liste_nombre = [100,1_000,10_000,100_000]
+# liste_naive = [intervalle_confiance_naïve(n) for n in liste_nombre]
+# liste_approx = [intervalle_confiance_approx(n) for n in liste_nombre]
+# plt.plot(liste_nombre,liste_naive, label = "méthode naïve", marker = "o", linestyle = " ")
+# plt.plot(liste_nombre,liste_approx, label = "méthode par approximation", marker = "o", linestyle = " ")
+# plt.legend(loc = 0)
+# plt.show()
+
+# Probabilité des 425 mètres
+
+def probabilité_supérieure_525(number, N = 95):
+	simulations_L = np.array([simulation_L(N) for _ in range(number)])
+	nombre_sup = 0
+	for simulation in simulations_L:
+		if simulation >= 525:
+			nombre_sup += 1
+	return nombre_sup / number
+
+print(probabilité_supérieure_525(100))
+print(probabilité_supérieure_525(1000))
+print(probabilité_supérieure_525(10000))
+print(probabilité_supérieure_525(100000))
