@@ -117,9 +117,9 @@ variance = M3 - np.dot(M_utile,M2.T)
 
 ## Question 7 
 
-# On calcule d'abord la matrice R, qui est la racine carrée de C.
+# On calcule d'abord la matrice R, qui est la racine carrée de la variance de Z.
 
-R = scipy.linalg.sqrtm(M3)
+R = scipy.linalg.sqrtm(variance)
 
 # On prend une fonction qui fait une simulation aléatoire d'un vecteur gaussion centré normé
 
@@ -146,15 +146,15 @@ def simulation_L(N = 95):
 
 def affichage_simulations(number = 1, N = 95):
 	plt.figure()
-	plt.title("Simulation des profondeurs en fonction de la position")
+	plt.title("Esperance conditionnelle en fonction de la position")
 	plt.xlabel("position")
-	plt.ylabel("profondeur")
+	plt.ylabel("Esperance conditionnelle")
 	plt.plot(unknown_indexes,esperance,label = "esperance")
+	plt.plot(observation_indexes, depth, label = "observations", marker = "o", linestyle = " ")
 	for i in range(number):
 		plt.plot(discretization_indexes,simulation_Z(N), label = "simulation numéro " + str(i+1))
 	plt.legend(loc = 0)
 	plt.show()
-
 
 def estimation(number, N = 95):
 	simulations = np.array([simulation_L(N) for _ in range(95)])
@@ -173,6 +173,8 @@ for e in esperance_complete[1:]:
 		longueur_esperee += ma.sqrt(5**2 + (e-temp)**2)
 		temp = 1*e
 
+print(longueur_esperee)
+
 def moyenne_evoluante(number, N = 95):
 	simulations = []
 	moyennes = []
@@ -182,18 +184,20 @@ def moyenne_evoluante(number, N = 95):
 	return moyennes
 
 def affichage_moyenne_evoluante(number, N = 95):
-	numbers = [i for i in range(int(number*0.05),number)]
-	moyennes = moyenne_evoluante(number,N)[int(number*.05):]
+	numbers = [i for i in range(10,number)]
+	moyennes = moyenne_evoluante(number,N)[10:]
 	plt.figure()
 	plt.title("Evolution de la moyenne des longueurs de cable simulee au cours des simulations")
 	plt.xlabel("numero de la simulation")
 	plt.ylabel("moyenne depuis le debut des simulation")
 	plt.plot(numbers,moyennes)
-	plt.plot(numbers,[moyennes[-1] for _ in range(int(number*.95))],label = "valeur finale")
-	plt.plot(numbers,[moyennes[-1] for _ in range(int(number*.95))],label = "intervalle à -00,5%")
-	plt.plot(numbers,[moyennes[-1] for _ in range(int(number*.95))],label = "intervalle à +00,5%")
+	plt.plot(numbers,[moyennes[-1] for _ in range(number - 10)],label = "valeur finale")
+	plt.plot(numbers,[moyennes[-1]*.995 for _ in range(number - 10)],label = "intervalle à -0,005%")
+	plt.plot(numbers,[moyennes[-1]*1.005 for _ in range(number - 10)],label = "intervalle à +0,005%")
 	plt.legend(loc=0)
 	plt.show()
+
+#affichage_moyenne_evoluante(100000)
 
 def hist_moyenne(number, N = 95):
 	moyennes = moyenne_evoluante(number,N)
@@ -201,6 +205,11 @@ def hist_moyenne(number, N = 95):
 	plt.title("Histogramme des longueurs de cable simulee au cours des simulations")
 	plt.xlabel("longueur")
 	plt.ylabel("nombre de simulations")
-	plt.hist(moyennes, bins = np.arange(530.4,530.6,.003))
+	plt.hist(moyennes, bins = np.arange(522.3,522.7,0.001))
 	plt.show()		
 
+#hist_moyenne(100000)
+
+def intervalle_confiance_naïve(number, N = 95):
+	simulations_L = [simulation_L(N) for _ in range(number)]
+	moyenne = np.mean(simulations)
